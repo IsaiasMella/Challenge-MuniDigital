@@ -22,7 +22,7 @@ export const ProjectLayout = ({ children }) => {
               <p>Hacer</p>
             </li>
             <li>
-              <p>En progreso</p>
+              <p>En curso</p>
             </li>
             <li>
               <p>Terminadas</p>
@@ -31,7 +31,7 @@ export const ProjectLayout = ({ children }) => {
               <p>Rechazadas</p>
             </li>
           </ul>
-          <button className="py-2 px-4 bg-violet-700 text-white font-medium rounded-3xl">
+          <button className="btn-primary">
             + Nueva tarea
           </button>
         </div>
