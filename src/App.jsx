@@ -1,10 +1,13 @@
-function App() {
+import { MainLayout } from "./Layout";
 
+function App() {
   return (
     <>
-      <h1>Empecemos!</h1>
+      <MainLayout>
+        <h1>Empecemos!</h1>
+      </MainLayout>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
