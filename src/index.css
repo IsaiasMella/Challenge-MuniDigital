@@ -3,6 +3,32 @@
 @tailwind utilities;
 
 .btn-primary {
-    @apply py-2 px-4 bg-violet-700 text-white font-medium rounded-3xl;
-  }
-  
+  @apply py-2 px-4 bg-violet-700 text-white font-medium rounded-3xl;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  height: 100% !important;
+
+  color: CanvasText; 
+  background-color: Canvas;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+

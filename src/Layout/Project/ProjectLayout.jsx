@@ -1,42 +1,82 @@
-export const ProjectLayout = ({ children }) => {
-  return (
-    <section className="w-full h-full flex flex-col bg-slate-100">
-      <header className="w-full h-32 bg-fuchsia-700 relative overflow-hidden">
-        <picture className="absolute w-full h-full top-0 left-0 z-0 blur-sm">
-          <img
-            src="/Hero-Project.avif"
-            className="object-cover w-full h-full"
-            alt="background header"
-          />
-        </picture>
-        <div className="relative flex flex-col justify-center h-full px-8 z-20 text-slate-200">
-          <p className="text-sm italic text-slate-300">Project</p>
-          <p className="font-semibold text-xl">CAMBIAR A DINAMICO</p>
-        </div>
-      </header>
+import { useState, useMemo, useContext } from "react";
 
-      <main className="w-full mt-4">
-        <div className="w-full flex justify-between px-8">
-          <ul className="flex gap-4 [&>li>p]:cursor-pointer [&>li>p]:p-2">
-            <li>
-              <p>Hacer</p>
-            </li>
-            <li>
-              <p>En curso</p>
-            </li>
-            <li>
-              <p>Terminadas</p>
-            </li>
-            <li>
-              <p>Rechazadas</p>
-            </li>
-          </ul>
-          <button className="btn-primary">
-            + Nueva tarea
-          </button>
-        </div>
-        <div className="py-4 px-8">{children}</div>
-      </main>
-    </section>
+import { tasksContext } from "../../Context/TasksProvider";
+
+import { collection, doc, writeBatch } from "firebase/firestore";
+import { db } from "../../Data/Firebase";
+
+import { CardLayout } from "../Card/CardLayout";
+import { ProjectLayoutUI } from "./ProjectLayoutUI/ProjectLayoutUI";
+
+import { getTaskById } from "../../Common/Utils";
+import { filterSearch, filterStatus } from "../../Common/Helpers";
+
+const initialStateFilters = {
+  search: "",
+  status: "all",
+};
+
+export const ProjectLayout = ({ handleModale, handleCurrentId }) => {
+  const [filterTasks, setFilterTasks] = useState(initialStateFilters);
+
+  const { tasks } = useContext(tasksContext);
+  const deletedTaskHistory = collection(db, "deleted-tasks");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFilterTasks({ ...filterTasks, [name]: value });
+  };
+
+  const filteredTasksBySearch = useMemo(
+    () => filterSearch(tasks, filterTasks),
+    [tasks, filterTasks]
+  );
+
+  const filteredTasks = useMemo(
+    () => filterStatus(filteredTasksBySearch, filterTasks),
+    [tasks, filterTasks]
+  );
+
+  // const sortedTasks = useMemo(
+  //   () => (filteredTasks ? sortSign(filteredSigns) : null),
+  //   [filterTasks]
+  // );
+
+  const deleteTask = async (id) => {
+    const taskDoc = doc(db, "tasks", id);
+    const deleteTask = await getTaskById(id);
+    const batch = writeBatch(db);
+    const deletedTaskDoc = doc(deletedTaskHistory, id);
+
+    batch.set(deletedTaskDoc, deleteTask);
+    batch.delete(taskDoc);
+
+    await batch.commit();
+  };
+
+  return (
+    <ProjectLayoutUI
+    handleChange={handleChange}
+      handleModale={handleModale}
+    >
+      <tbody>
+        <tr className="w-full grid grid-cols-4">
+          <td className="overflow-y">
+            {filteredTasks &&
+              filteredTasks.map((task) => (
+                <CardLayout
+                  key={task.id}
+                  id={task.id}
+                  title={task.title}
+                  description={task.description}
+                  deleteTask={deleteTask}
+                  handleCurrentId={handleCurrentId}
+                />
+              ))}
+          </td>
+        </tr>
+        {/* <TaskList /> */}
+      </tbody>
+    </ProjectLayoutUI>
   );
 };

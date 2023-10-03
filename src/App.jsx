@@ -1,16 +1,32 @@
-import { NewTask } from "./Components";
+import { useState } from "react";
+import { TaskForm } from "./Components";
 import { MainLayout, ModalLayout, ProjectLayout } from "./Layout";
 
 function App() {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [currentId, setCurrentId] = useState("");
+
+  const handleModale = () => {
+    setModalIsOpen(!modalIsOpen);
+  };
+
+  const handleCurrentId = (id) => {
+    setCurrentId(id);
+    handleModale()
+  };
   return (
-    <main className="w-full h-screen overflow-y-hidden relative">
-      <ModalLayout>
-        <NewTask/>
-      </ModalLayout>
+    <main className="w-full h-full relative">
+      {modalIsOpen && (
+        <ModalLayout handleModale={handleModale}>
+          <TaskForm
+            handleModale={handleModale}
+            handleCurrentId={handleCurrentId}
+            currentId={currentId}
+          />
+        </ModalLayout>
+      )}
       <MainLayout>
-        <ProjectLayout>
-          <p>ACA van las tarjetitas</p>
-        </ProjectLayout>
+        <ProjectLayout handleModale={handleModale} handleCurrentId={handleCurrentId} />
       </MainLayout>
     </main>
   );

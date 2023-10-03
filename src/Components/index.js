@@ -1,1 +1,2 @@
-export * from './Forms/NewTask/NewTask';
+export * from './TaskForm/TaskForm';
+export * from './TaskList/TaskList';
