@@ -6,11 +6,13 @@ export const TaskList = ({
   customStyles,
   children,
   statusList,
+  headerId,
 }) => {
   const { startDrag, draggingOver, onDrop } = useDragAndDrop();
 
   return (
     <td
+      headers={headerId}
       draggable
       onDragOver={(e) => draggingOver(e)}
       onDrop={(e) => onDrop(e, statusList)}

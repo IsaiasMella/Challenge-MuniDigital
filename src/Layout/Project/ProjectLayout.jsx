@@ -38,6 +38,7 @@ export const ProjectLayout = ({ handleModale, handleCurrentId }) => {
             {columns.map((col) => (
               <TaskList
                 key={col.name}
+                headerId={col.name}
                 handleCurrentId={handleCurrentId}
                 filteredTasks={filteredTasks}
                 customStyles={col.colorBody}
