@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TaskForm } from "./Components";
-import { MainLayout, ModalLayout, ProjectLayout } from "./Layout";
+import { ModalLayout, ProjectLayout } from "./Layout";
 
 function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -12,7 +12,7 @@ function App() {
 
   const handleCurrentId = (id) => {
     setCurrentId(id);
-    handleModale()
+    handleModale();
   };
   return (
     <main className="w-full h-full relative">
@@ -25,9 +25,10 @@ function App() {
           />
         </ModalLayout>
       )}
-      <MainLayout>
-        <ProjectLayout handleModale={handleModale} handleCurrentId={handleCurrentId} />
-      </MainLayout>
+      <ProjectLayout
+        handleModale={handleModale}
+        handleCurrentId={handleCurrentId}
+      />
     </main>
   );
 }

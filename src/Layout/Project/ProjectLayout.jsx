@@ -2,14 +2,14 @@ import { useState, useMemo, useContext } from "react";
 
 import { tasksContext } from "../../Context/TasksProvider";
 
-import { collection, doc, writeBatch } from "firebase/firestore";
+import { updateDoc, collection, doc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { db } from "../../Data/Firebase";
 
-import { CardLayout } from "../Card/CardLayout";
 import { ProjectLayoutUI } from "./ProjectLayoutUI/ProjectLayoutUI";
 
 import { getTaskById } from "../../Common/Utils";
 import { filterSearch, filterStatus } from "../../Common/Helpers";
+import { NavBar, Card } from "../../Components";
 
 const initialStateFilters = {
   search: "",
@@ -37,11 +37,6 @@ export const ProjectLayout = ({ handleModale, handleCurrentId }) => {
     [tasks, filterTasks]
   );
 
-  // const sortedTasks = useMemo(
-  //   () => (filteredTasks ? sortSign(filteredSigns) : null),
-  //   [filterTasks]
-  // );
-
   const deleteTask = async (id) => {
     const taskDoc = doc(db, "tasks", id);
     const deleteTask = await getTaskById(id);
@@ -54,29 +49,93 @@ export const ProjectLayout = ({ handleModale, handleCurrentId }) => {
     await batch.commit();
   };
 
+  const startDrag = (e, task) => {
+    e.dataTransfer.setData("text/plain", task.id);
+  };
+
+  const draggingOver = (e) => {
+    e.preventDefault();
+  };
+
+  const onDrop = async (e, newStatus) => {
+    const taskID = e.dataTransfer.getData("text/plain");
+    const item = tasks.find((task) => task.id == taskID);
+    const newItem = {
+      ...item,
+      lastUpdate: serverTimestamp(),
+      status: newStatus,
+      history: [...item.history, item],
+    };
+
+    await updateDoc(doc(db, "tasks", taskID), newItem);
+  };
+
   return (
-    <ProjectLayoutUI
-    handleChange={handleChange}
-      handleModale={handleModale}
-    >
-      <tbody>
-        <tr className="w-full grid grid-cols-4">
-          <td className="overflow-y">
-            {filteredTasks &&
-              filteredTasks.map((task) => (
-                <CardLayout
-                  key={task.id}
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  deleteTask={deleteTask}
-                  handleCurrentId={handleCurrentId}
-                />
-              ))}
-          </td>
-        </tr>
-        {/* <TaskList /> */}
-      </tbody>
-    </ProjectLayoutUI>
+    <div className="h-full">
+      <NavBar handleModale={handleModale} handleChange={handleChange} />
+      <ProjectLayoutUI handleChange={handleChange} handleModale={handleModale}>
+        <tbody>
+          <tr className=" w-11/12 m-auto gap-4 grid grid-cols-4">
+            <td
+              draggable
+              onDragOver={(e) => draggingOver(e)}
+              onDrop={(e) => onDrop(e, "hacer")}
+              className="overflow-y flex flex-col gap-3 bg-sky-50/50 p-4 rounded-b-xl"
+            >
+              {filteredTasks &&
+                filteredTasks.map((task) => {
+                  if (task.status === "hacer") {
+                    return (
+                      <div
+                        draggable
+                        onDragStart={(e) => startDrag(e, task)}
+                        key={task.id}
+                      >
+                        <Card
+                          id={task.id}
+                          title={task.title}
+                          description={task.description}
+                          deleteTask={deleteTask}
+                          handleCurrentId={handleCurrentId}
+                          startDrag={startDrag}
+                        />
+                      </div>
+                    );
+                  }
+                })}
+            </td>
+            <td
+              onDragOver={(e) => draggingOver(e)}
+              onDrop={(e) => onDrop(e, "en curso")}
+              className="overflow-y flex flex-col gap-3 bg-amber-50/50 p-4 rounded-b-xl"
+            >
+              {filteredTasks &&
+                filteredTasks.map((task) => {
+                  if (task.status === "en curso") {
+                    return (
+                      <div
+                        draggable
+                        onDragStart={(e) => startDrag(e, task)}
+                        key={task.id}
+                      >
+                        <Card
+                          id={task.id}
+                          title={task.title}
+                          description={task.description}
+                          deleteTask={deleteTask}
+                          handleCurrentId={handleCurrentId}
+                          startDrag={startDrag}
+                        />
+                      </div>
+                    );
+                  }
+                })}
+            </td>
+            <td className="overflow-y flex flex-col gap-3 bg-emerald-50/50 p-4 rounded-b-xl"></td>
+            <td className="overflow-y flex flex-col gap-3 bg-rose-50/50 p-4 rounded-b-xl"></td>
+          </tr>
+        </tbody>
+      </ProjectLayoutUI>
+    </div>
   );
 };

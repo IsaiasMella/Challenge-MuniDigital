@@ -32,6 +32,7 @@ export const TasksProvider = ({ children }) => {
 
   const values = {
     tasks,
+    setTasks,
     taskCollection,
   };
 
