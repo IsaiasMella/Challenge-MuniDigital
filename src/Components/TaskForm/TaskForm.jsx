@@ -1,75 +1,18 @@
-import { useState, useContext, useEffect } from "react";
-import { addDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
-import { db } from "../../Data/Firebase";
+import { useContext } from "react";
+
 import { tasksContext } from "../../Context/TasksProvider";
-import { getTaskById } from "../../Common/Utils";
-import { useRef } from "react";
 
-const initialState = {
-  title: "",
-  description: "",
-  status: "hacer",
-  history: [],
-  created: serverTimestamp(),
-  lastUpdate: serverTimestamp(),
-};
+import { useTaskForm } from "../../Hooks";
 
-export const TaskForm = ({
-  handleModale,
-  stopPropagation,
-  currentId,
-  handleCurrentId,
-}) => {
-  const [newTask, setNewTask] = useState(initialState);
-  const modifiedFieldsRef = useRef({});
-  const pruebaRef = useRef({});
-
+export const TaskForm = ({ handleModale, stopPropagation, currentId, handleCurrentId,}) => {
+  
   const { taskCollection } = useContext(tasksContext);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setNewTask({ ...newTask, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const taskWithTimestamp = {
-      ...newTask,
-      created: serverTimestamp(),
-    };
-
-    handleModale();
-
-    if (currentId) {
-      pruebaRef.current = {
-        ...newTask,
-        lastUpdate: serverTimestamp(),
-        history: [...newTask.history, modifiedFieldsRef.current],
-      };
-      await updateDoc(doc(db, "tasks", currentId), pruebaRef.current);
-    } else {
-      await addDoc(taskCollection, taskWithTimestamp);
-    }
-  };
-
-  useEffect(() => {
-    const fetchTask = async () => {
-      if (currentId) {
-        const taskData = await getTaskById(currentId);
-        modifiedFieldsRef.current = taskData;
-        setNewTask(taskData);
-      } else {
-        setNewTask(initialState);
-      }
-    };
-    fetchTask();
-    return () => {
-      setNewTask(initialState);
-      handleCurrentId("");
-    };
-  }, [currentId]);
+  const { newTask, handleChange, handleSubmit } = useTaskForm(
+    currentId,
+    handleModale,
+    handleCurrentId,
+    taskCollection
+  );
 
   return (
     <form

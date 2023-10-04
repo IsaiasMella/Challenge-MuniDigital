@@ -1,7 +1,7 @@
 export const NavBar = ({ handleChange, handleModale }) => {
   return (
     <nav className="flex justify-between gap-4 bg-white py-4 px-8">
-      <p className="font-bold text-3xl">
+      <p className="font-bold text-3xl cursor-default">
         to<span className="text-violet-600">do.</span>
       </p>
       <div className="flex flex-1 justify-center gap-10">
@@ -15,7 +15,7 @@ export const NavBar = ({ handleChange, handleModale }) => {
           placeholder="Buscar"
         />
         <select
-          className="select-none outline-none border-b-[2px] border-slate-200 rounded-md  px-2"
+          className="select-none outline-none cursor-pointer border-b-[2px] border-slate-200 rounded-md  px-2"
           name="status"
           onChange={(e) => {
             handleChange(e);
