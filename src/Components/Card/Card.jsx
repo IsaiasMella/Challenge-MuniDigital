@@ -12,8 +12,8 @@ export const Card = ({
       <h5 className="font-semibold text-center">{title && capitalizedText(title)}</h5>
       <p className="w-full break-words">{description && capitalizedText(description)}</p>
       <div className="flex gap-2">
-        <img src="./trash.svg" onClick={() => deleteTask(id)} className=" cursor-pointer text-red-0 stroke-none fill-none"/>
-        <img src="./pencil.svg" onClick={() => handleCurrentId(id)} className="cursor-pointer fill-red-500"/>
+        <img src="./trash.svg" id='delete' onClick={() => deleteTask(id)} className=" cursor-pointer text-red-0 stroke-none fill-none"/>
+        <img src="./pencil.svg" id='update' onClick={() => handleCurrentId(id)} className="cursor-pointer fill-red-500"/>
       </div>
     </div>
   );

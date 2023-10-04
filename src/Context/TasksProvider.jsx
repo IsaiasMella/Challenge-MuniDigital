@@ -10,6 +10,9 @@ export const TasksProvider = ({ children }) => {
   const [tasks, setTasks] = useState();
 
   const taskCollection = collection(db, "tasks");
+
+  if(!taskCollection) throw new Error('No se han conseguido las tareas')
+
   const orderedTasksCollection = query(taskCollection, orderBy("created"));
 
   const getTasks = () => {

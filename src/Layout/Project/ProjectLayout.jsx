@@ -13,7 +13,7 @@ export const ProjectLayout = ({ handleModale, handleCurrentId }) => {
   const [filterTasks, setFilterTasks] = useState(initialStateFilters);
 
   const { tasks } = useContext(tasksContext);
-
+    
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFilterTasks({ ...filterTasks, [name]: value });
