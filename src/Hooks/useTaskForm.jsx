@@ -14,7 +14,7 @@ export const useTaskForm = (
 ) => {
   const [newTask, setNewTask] = useState(initialTask);
   const modifiedFieldsRef = useRef({});
-  const pruebaRef = useRef({});
+  const updatedTaskRef = useRef({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,12 +31,12 @@ export const useTaskForm = (
     handleModale();
     
     if (currentId) {
-      pruebaRef.current = {
+      updatedTaskRef.current = {
         ...newTask,
         lastUpdate: serverTimestamp(),
         history: [...newTask.history, modifiedFieldsRef.current],
       };
-      await updateDoc(doc(db, "tasks", currentId), pruebaRef.current);
+      await updateDoc(doc(db, "tasks", currentId), updatedTaskRef.current);
     } else {
       await addDoc(taskCollection, taskWithTimestamp);
     }
